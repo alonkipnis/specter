@@ -3,27 +3,101 @@
 # saner programming env: these switches turn some bugs into errors
 set -o errexit -o pipefail -o noclobber -o nounset
 
-! getopt --test > /dev/null
-if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
-    echo 'I’m sorry, `getopt --test` failed in this environment.'
-    exit 1
-fi
+# ! getopt --test > /dev/null
+# if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
+#     echo 'I’m sorry, `getopt --test` failed in this environment.'
+#     exit 1
+# fi
 
-OPTIONS=c:s:
-LONGOPTS=debug,force,output:,verbose,train-path:,test-path:,dev-path:,config:,serialization-dir:,num-epochs:,bert-vocab:,bert-model:,bert-weights:,vocab:,cuda-device:,recover,dataset-type:,lazy,include-venue,batch-size:,num-train-instances:,max-seq-len:
+# OPTIONS=c:s:
+# LONGOPTS=debug,force,output:,verbose,train-path:,test-path:,dev-path:,config:,serialization-dir:,num-epochs:,bert-vocab:,bert-model:,bert-weights:,vocab:,cuda-device:,recover,dataset-type:,lazy,include-venue,batch-size:,num-train-instances:,max-seq-len:
 
-# -use ! and PIPESTATUS to get exit code with errexit set
-# -temporarily store output to be able to check for errors
-# -activate quoting/enhanced mode (e.g. by writing out “--options”)
-# -pass arguments only via   -- "$@"   to separate them correctly
-! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@")
-if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
-    # e.g. return value is 1
-    #  then getopt has complained about wrong arguments to stdout
-    exit 2
-fi
-# read getopt’s output this way to handle the quoting right:
-eval set -- "$PARSED"
+# # -use ! and PIPESTATUS to get exit code with errexit set
+# # -temporarily store output to be able to check for errors
+# # -activate quoting/enhanced mode (e.g. by writing out “--options”)
+# # -pass arguments only via   -- "$@"   to separate them correctly
+# ! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@")
+# if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
+#     # e.g. return value is 1
+#     #  then getopt has complained about wrong arguments to stdout
+#     exit 2
+# fi
+# # read getopt’s output this way to handle the quoting right:
+# eval set -- "$PARSED"
+# # --------------
+# while true; do
+#     case "$1" in
+#         --train-path)
+#             TRAIN_PATH="$2"
+#             shift 2
+#             ;;
+#         --dev-path)
+#             DEV_PATH="$2"
+#             shift 2
+#             ;;
+#         -c|--config)
+#             config_file="$2"
+#             shift 2
+#             ;;
+#         -s|--serialization-dir)
+#             serialization_dir="$2"
+#             shift 2
+#             ;;
+#         --num-epochs)
+#             NUM_EPOCHS="$2"
+#             shift 2
+#             ;;
+#         --vocab)
+#             VOCAB_DIR="$2"
+#             shift 2
+#             ;;
+#         --bert-vocab)
+#             BERT_VOCAB="$2"
+#             shift 2
+#             ;;
+#         --bert-weights)
+#             BERT_WEIGHTS="$2"
+#             shift 2
+#             ;;
+#         --bert-model)
+#             BERT_MODEL="$2"
+#             shift 2
+#             ;;
+#         --cuda-device)
+#             gpu="$2"
+#             shift 2
+#             ;;
+#         --recover)
+#             recover=true
+#             shift
+#             ;;
+#         --include-venue)
+#             INCLUDE_VENUE="true"
+#             shift
+#             ;;
+#         --batch-size)
+#             batch_size="$2"
+#             shift 2
+#             ;;
+#         --num-train-instances)
+#             num_train_instances="$2"
+#             shift 2
+#             ;;
+#         --max-seq-len)
+#             max_seq_len="$2"
+#             shift 2
+#             ;;
+#         --)
+#             shift
+#             break
+#             ;;
+#         *)
+#             echo "Programming error"
+#             exit 3
+#             ;;
+#     esac
+# done
+
 
 #d=n f=n v=n outFile=- num-epochs=30
 # set default args
@@ -47,83 +121,16 @@ BERT_WEIGHTS="data/scibert_scivocab_uncased/scibert.tar.gz"
 
 VOCAB_DIR="data/vocab/"
 INCLUDE_VENUE="false"
+config_file="experiment_configs/simple.jsonnet"
+num_train_instances="2720"
+gpu="-1"
+serialization_dir="model-output/"
+NUM_EPOCHS="2" 
+BATCH_SIZE="4"
+TRAIN_PATH="data/preprocessed/data-train.p" 
+DEV_PATH="data/preprocessed/data-val.p"
 
-# --------------
-
-while true; do
-    case "$1" in
-        --train-path)
-            TRAIN_PATH="$2"
-            shift 2
-            ;;
-        --dev-path)
-            DEV_PATH="$2"
-            shift 2
-            ;;
-        -c|--config)
-            config_file="$2"
-            shift 2
-            ;;
-        -s|--serialization-dir)
-            serialization_dir="$2"
-            shift 2
-            ;;
-        --num-epochs)
-            NUM_EPOCHS="$2"
-            shift 2
-            ;;
-        --vocab)
-            VOCAB_DIR="$2"
-            shift 2
-            ;;
-        --bert-vocab)
-            BERT_VOCAB="$2"
-            shift 2
-            ;;
-        --bert-weights)
-            BERT_WEIGHTS="$2"
-            shift 2
-            ;;
-        --bert-model)
-            BERT_MODEL="$2"
-            shift 2
-            ;;
-        --cuda-device)
-            gpu="$2"
-            shift 2
-            ;;
-        --recover)
-            recover=true
-            shift
-            ;;
-        --include-venue)
-            INCLUDE_VENUE="true"
-            shift
-            ;;
-        --batch-size)
-            batch_size="$2"
-            shift 2
-            ;;
-        --num-train-instances)
-            num_train_instances="$2"
-            shift 2
-            ;;
-        --max-seq-len)
-            max_seq_len="$2"
-            shift 2
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            echo "Programming error"
-            exit 3
-            ;;
-    esac
-done
-
-#echo "running experiment: $config_file, train_path: $TRAIN_PATH, coviews: $COVIEWS, cocites: $COCITES, copdfs: $COPDFS, epochs: $NUM_EPOCHS, vocab: $vocab, limit-training: $RatioTrainingSamples"
+echo "running experiment: $config_file, train_path: $TRAIN_PATH, epochs: $NUM_EPOCHS"
 
 export TRAIN_PATH=$TRAIN_PATH
 export DEV_PATH=$DEV_PATH
