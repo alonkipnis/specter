@@ -3,6 +3,15 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# model files:
+scibert_scivocab_uncased.tar
+scibert_scivocab_uncased/
+model.tar.gz
+archive.tar.gz
+
+#training
+model-output/
+
 # C extensions
 *.so
 
@@ -19,6 +28,7 @@ lib64/
 parts/
 sdist/
 var/
+env/
 wheels/
 pip-wheel-metadata/
 share/python-wheels/
@@ -83,6 +93,7 @@ ipython_config.py
 
 # pyenv
 .python-version
+env
 
 # pipenv
 #   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
