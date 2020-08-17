@@ -12,7 +12,7 @@ import argparse
 import re
 from tqdm import tqdm
 
-sys.path.append("/Users/kipnisal/AI_Pilot/Code/")
+#sys.path.append("/Users/kipnisal/AI_Pilot/Code/")
 from Patent import Patent
 
 
@@ -134,7 +134,7 @@ def main() :
 
     lo_patents = load_patents(in_folder)
 
-    df = get_citation_info(lo_patents)
+    df = get_citation_info(lo_patents, use_topic_ref=use_topics)
 
     res = {}
     for r in df.iterrows() :
