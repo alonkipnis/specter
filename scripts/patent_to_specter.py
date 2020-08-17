@@ -146,7 +146,8 @@ def main() :
         dc.update(dc_neg)
         dc.update(dc_weak)
         dc.update(dc_strong) # Note: updating order is important!
-        res[r[1]['doc_id']] = dc
+        if dc != {} :
+            res[r[1]['doc_id']] = dc
 
     # Serializing json    
     fn1 = out_folder + "/" + "data.json"
