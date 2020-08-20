@@ -12,6 +12,7 @@ import argparse
 import re
 from tqdm import tqdm
 
+logging.basicConfig(level=logging.INFO)
 #sys.path.append("/Users/kipnisal/AI_Pilot/Code/")
 from Patent import Patent
 
@@ -113,9 +114,8 @@ def get_citation_info(lo_patents, use_topic_ref = False) :
 def main() :
     parser = argparse.ArgumentParser()
     parser = argparse.ArgumentParser(description='lemmatize patents')
-    parser.add_argument('-i', type=str, default='./',
-                                          help='path to data folder')
-    parser.add_argument('-o', type=str, default='./', help='output folder')
+    parser.add_argument('-i', type=str, help='path to data folder')
+    parser.add_argument('-o', type=str, help='output folder')
 
     parser.add_argument("--use-topics", default=False, action="store_true" ,
                                              help="use topic information"
@@ -135,6 +135,9 @@ def main() :
     lo_patents = load_patents(in_folder)
 
     df = get_citation_info(lo_patents, use_topic_ref=use_topics)
+    print("Total # of references: ", df.no_ref.sum())
+    print("Total # of existing references: ", df.no_existing_ref.sum())
+    print("Total # of back references: ", df.no_back_ref.sum(), " (sanity check)")
 
     res = {}
     for r in df.iterrows() :

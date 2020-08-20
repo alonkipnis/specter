@@ -308,8 +308,11 @@ class TrainingInstanceGenerator:
                                                             self.ratio_hard_negatives, query_ids,
                                                             data_subset=subset_name, n_jobs=n_jobs):
             try:
+                print("query paper")
                 query_paper = self.metadata[triplet[0]]
+                print("pos paper")
                 pos_paper = self.metadata[triplet[1][0]]
+                print("neg paper")
                 neg_paper = self.metadata[triplet[2][0]]
                 count_success += 1
 
