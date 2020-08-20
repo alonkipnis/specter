@@ -302,14 +302,27 @@ class TrainingInstanceGenerator:
         """
         logger.info('Generating triplets ...')
         count_success, count_fail = 0, 0
-        # instances = []
-        for triplet in triplet_sampling_parallel.generate_triplets(list(self.metadata.keys()), self.data,
-                                                            self.margin_fraction, self.samples_per_query,
-                                                            self.ratio_hard_negatives, query_ids,
-                                                            data_subset=subset_name, n_jobs=n_jobs):
+
+        print("calling 'generate_triplets'")
+
+        instances = list(triplet_sampling_parallel.generate_triplets(
+                        list(self.metadata.keys()), self.data,
+                        self.margin_fraction, self.samples_per_query,
+                        self.ratio_hard_negatives, query_ids,
+                        data_subset=subset_name, n_jobs=n_jobs))
+        print(f"generated {len(instances)} triplets")
+        for triplet in instances :
+        # for triplet in triplet_sampling_parallel.generate_triplets(
+        #                 list(self.metadata.keys()), self.data,
+        #                 self.margin_fraction, self.samples_per_query,
+        #                 self.ratio_hard_negatives, query_ids,
+        #                 data_subset=subset_name, n_jobs=n_jobs):
+            
             try:
-                print("query paper")
+                if triplet[0] not in self.metadata :
+                    print(f"id {triplet[0]} is not in metadata")
                 query_paper = self.metadata[triplet[0]]
+                print("queried paper = ", query_paper)
                 print("pos paper")
                 pos_paper = self.metadata[triplet[1][0]]
                 print("neg paper")
@@ -357,6 +370,7 @@ class TrainingInstanceGenerator:
                 }
                 yield instance
             except KeyError:
+                print("no title and abstract")
                 # if there is no title and abstract skip this triplet
                 count_fail += 1
                 pass
@@ -364,7 +378,7 @@ class TrainingInstanceGenerator:
                      f"total: {count_success+count_fail}")
 
 
-def get_instances(data, query_ids_file, metadata, data_source=None, n_jobs=1, n_jobs_raw=12,
+def get_instances(data, query_ids_file, metadata, data_source=None, n_jobs=1, n_jobs_raw=1,
                   ratio_hard_negatives=0.3, margin_fraction=0.5, samples_per_query=5,
                   concat_title_abstract=False, included_text_fields='title abstract'):
     """
@@ -468,6 +482,7 @@ def main(data_files, train_ids, val_ids, test_ids, metadata_file, outdir, n_jobs
                 pickler = pickle.Pickler(f_in)
                 # pickler.fast = True
                 idx = 0
+                logger.debug(f"data length = {len(data)}" )
                 for instance in get_instances(data=data,
                                               query_ids_file=ds,
                                               metadata=metadata,

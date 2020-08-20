@@ -91,24 +91,27 @@ def get_citation_info(lo_patents, use_topic_ref = False) :
 
     dfr = dfr.set_index('doc_id')
     
-    if use_topic_ref :
+    if use_topic_ref  :
         logging.info("Reading topic information...")
         df_topic = get_topic_connections(lo_patents)
-        dfr = dfr.join(df_topic[['doc_id', 'ref']].set_index('doc_id'), rsuffix='_topic')
+        dfr = dfr.join(df_topic[['doc_id', 'ref', 'no_ref']].set_index('doc_id'), rsuffix='_topic')
     else :
         dfr.loc[:, 'ref_topic'] = dfr.apply(lambda _: [], axis=1)
+        dfr.loc[:, 'no_ref_topic'] = dfr.apply(lambda _: [], axis=1)
         
     dfr['back_ref'] = dfr.apply(lambda _: [], axis=1)
     for row in dfr.iterrows() :
         for r in row[1]['existing_ref'] :
             dfr.at[r, 'back_ref'] += [r]
                         
-    dfr.loc[:,'no_ref'] = dfr.ref.apply(lambda x : len(x))
+    dfr.loc[:, 'no_ref'] = dfr.ref.apply(lambda x : len(x))
     dfr.loc[:, 'no_existing_ref'] = dfr.existing_ref.apply(lambda x : len(x))
     dfr.loc[:, 'no_back_ref'] = dfr.back_ref.apply(lambda x : len(x))
     
     dfr = dfr.reset_index()
-    return dfr.rename(columns = {'existing_ref' : 'ref_strong', 'back_ref' : 'ref_weak', 'ref_topic' : 'ref_neg'})
+    return dfr.rename(columns = {'existing_ref' : 'ref_strong',
+                 'back_ref' : 'ref_weak', 'ref_topic' : 'ref_neg',
+                                'no_ref_topic' : 'no_ref_neg'})
 
 
 def main() :
