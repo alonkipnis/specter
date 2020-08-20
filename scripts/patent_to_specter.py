@@ -107,11 +107,12 @@ def get_citation_info(lo_patents, use_topic_ref = False) :
     dfr.loc[:, 'no_ref'] = dfr.ref.apply(lambda x : len(x))
     dfr.loc[:, 'no_existing_ref'] = dfr.existing_ref.apply(lambda x : len(x))
     dfr.loc[:, 'no_back_ref'] = dfr.back_ref.apply(lambda x : len(x))
+    dfr.loc[:, 'no_ref_topic'] = dfr.ref_topic.apply(lambda x : len(x))
     
     dfr = dfr.reset_index()
     return dfr.rename(columns = {'existing_ref' : 'ref_strong',
                  'back_ref' : 'ref_weak', 'ref_topic' : 'ref_neg',
-                                'no_ref_topic' : 'no_ref_neg'})
+                                'no_ref_topic' : 'no_neg_ref'})
 
 
 def main() :
