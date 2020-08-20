@@ -9,6 +9,9 @@ scibert_scivocab_uncased/
 model.tar.gz
 archive.tar.gz
 
+#data
+data/my_training
+
 #training
 model-output/
 
