@@ -10,7 +10,8 @@ model.tar.gz
 archive.tar.gz
 
 #data
-data/my_training
+data/my_training/
+data/preprocessed/
 
 #training
 model-output/
