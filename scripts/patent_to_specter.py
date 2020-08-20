@@ -141,6 +141,7 @@ def main() :
     print("Total # of references: ", df.no_ref.sum())
     print("Total # of existing references: ", df.no_existing_ref.sum())
     print("Total # of back references: ", df.no_back_ref.sum(), " (sanity check)")
+    print("Total # of negative references: ", df.no_neg_ref.sum())
 
     res = {}
     for r in df.iterrows() :
