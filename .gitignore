@@ -8,6 +8,7 @@ scibert_scivocab_uncased.tar
 scibert_scivocab_uncased/
 model.tar.gz
 archive.tar.gz
+*.obj
 
 #data
 data/

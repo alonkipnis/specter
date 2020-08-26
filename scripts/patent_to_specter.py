@@ -60,7 +60,10 @@ def get_topic_connections(lo_patents) :
         df = df.append(metadata, ignore_index = True)
 
     df.loc[:,'ref'] = df['cpc'].apply(where_in_list)
-    df.apply(lambda row : row['ref'].remove(row['doc_id']), axis=1)
+    logging.debug("removing own doc_id from list of references:")
+    df.loc[:, 'ref'] = df.apply(
+    lambda row : [t for t in row['ref'] if t != row['doc_id']],
+             axis=1)
 
     df.loc[:,'no_ref'] = df.ref.apply(lambda x : len(x))
 
