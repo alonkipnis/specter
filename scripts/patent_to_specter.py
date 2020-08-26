@@ -134,8 +134,19 @@ def main() :
     in_folder = args.i
     out_folder = args.o
 
+    # check output dir
+    try :
+        fn2 = out_folder + "/" + "metadata.json"
+        with open(fn2, "w") as f :
+            pass
+    except :
+        print(f"Output directory {out_folder} does not exists or is not writable.")
+        import sys
+        sys.exit(1)
+        
+
     # +=========================
-    # | script to generate files readable by SPECTER from rejection and topic 
+    # | script to generate files readable by SPECTER from rejections and topic 
     # | information.
     # +========================
 
